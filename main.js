@@ -13,7 +13,7 @@ function unique_vals_in_array(arr) {
 }
 
 function update_page() {
-    document.getElementById("shown_month").innerHTML = shown_month_name + " Annual Events";
+    document.getElementById("shown_month").innerHTML = shown_month_name;
 
     update_events_for_month();
 }
