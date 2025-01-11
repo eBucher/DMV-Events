@@ -34,57 +34,78 @@ document.getElementById('only_show_free_events_switch').addEventListener("change
     update_page();
 });
 
+function pill_for_category(category) {
+    if(category == "Arts") {
+        var color = "danger";
+    } else if(category == "Festival") {
+        var color = "Success";
+    } else if(category == "Miscellaneous") {
+        var color = "primary";
+    } else if(category == "Holiday") {
+        var color = "info";
+    } else if(category == "Movies") {
+        var color = "warning";
+    } else {
+        var color = "secondary";
+    }
+    return '<span class="badge rounded-pill text-bg-' + color + '">' + category + '</span>';
+
+}
 
 function update_events_for_month() {
-    let events = {};
-    let categories = [];
 
-    for(let i = 0; i < events_by_month_data.length; i++) {
-        let cat = events_by_month_data[i].Category
-        let event_name = events_by_month_data[i]["Name"];
-        let link = events_by_month_data[i]["Link"];
-        let month = events_by_month_data[i]["Month"];
-        let free = events_by_month_data[i]["Free"];
-        if(!categories.includes(cat)) {
-            categories.push(cat);
-            events[cat] = [];
-        }
-        if(month == shown_month_name) {
-            events[cat].push({Name: event_name, Link: link, Free: free})
+    if(document.getElementById("only_show_free_events_switch").checked == true) {
+        var filtered_events = events_by_month_data.filter(function(event) {
+            return event.Free == "Yes";
+        });
+    } else {
+        var filtered_events = events_by_month_data
+    }
+
+    let events = {Annual:[], Sports:[]};
+
+    for(let i = 0; i < filtered_events.length; i++) {
+        let event_obj = filtered_events[i];
+        if(event_obj.Month == shown_month_name) {
+            if(event_obj.Category == "Sports") {
+                events.Sports.push(event_obj);
+            } else {
+                events.Annual.push(event_obj);
+            }
         }
     }
 
-    categories = categories.sort();
-
-    let container = document.getElementById("monthly_events");
-
+    // Annual Events
+    let insertion_div = document.getElementById("shown_annual_events");
     let new_html = ""
 
-    for(let i = 0; i < categories.length; i++) {
-        let cat = categories[i]
-        new_html += "<h3>" + cat + "</h3>";
-
-        if(document.getElementById("only_show_free_events_switch").checked == true) {
-            var filtered_events = events[cat].filter(function(event) {
-                console.log(event.Free);
-                return event.Free == "Yes";
-            });
-        } else {
-            var filtered_events = events[cat];
+    if(events.Annual.length == 0) {
+        new_html += "None<br>"
+    } else {
+        new_html += '<ul>';
+        for(let i = 0; i < events.Annual.length; i++) {
+            new_html += '<li><a target = "_blank" href="' + events.Annual[i].Link + '">' + pill_for_category(events.Annual[i].Category) + " " + events.Annual[i].Name + '</a></li>'
         }
-        
-        if(filtered_events.length == 0) {
-            new_html += "None<br>"
-        } else {
-            new_html += '<ul class="list-group list-group-flush">';
-            for(let j = 0; j < filtered_events.length; j++) {
-                new_html += '<li class="list-group-item"><a target = "_blank" href="' + filtered_events[j]['Link'] + '">' + filtered_events[j]['Name'] + '</a></li>'
-            }
-            new_html += "</ul>";
-        }
+        new_html += "</ul>";
     }
+    
+    insertion_div.innerHTML = new_html;
 
-    container.innerHTML = new_html;
+    // Insert sports
+    insertion_div = document.getElementById("shown_sports");
+    new_html = ""
+
+    if(events.Sports.length == 0) {
+        new_html += "None<br>"
+    } else {
+        new_html += '<ul>';
+        for(let i = 0; i < events.Sports.length; i++) {
+            new_html += '<li><a target = "_blank" href="' + events.Sports[i].Link + '">' + " " + events.Sports[i].Name + '</a></li>'
+        }
+        new_html += "</ul>";
+    }
+    
+    insertion_div.innerHTML = new_html;
 }
 
 
