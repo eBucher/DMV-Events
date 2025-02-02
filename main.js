@@ -20,10 +20,10 @@ function update_page() {
 
 function change_month(diff) {
     shown_month_idx = shown_month_idx + diff;
-    if(shown_month_idx + diff < 0) {
-        shown_month_idx = 11
+    if(shown_month_idx < 0) {
+        shown_month_idx = 11;
     } else if (shown_month_idx > 11) {
-        shown_month_idx = 0
+        shown_month_idx = 0;
     }
     shown_month_name = months[shown_month_idx];
 
